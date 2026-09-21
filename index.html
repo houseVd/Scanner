@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eskanè QR Code</title>
-    <!-- Enpòte bibliyotèk html5-qrcode la -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body {
@@ -12,24 +11,26 @@
             background-color: #0f172a;
             color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             background: #1e293b;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             text-align: center;
         }
         h2 {
-            margin-bottom: 15px;
+            font-size: 18px;
+            margin-bottom: 10px;
             color: #38bdf8;
         }
         #reader {
@@ -39,20 +40,20 @@
             border: 2px solid #334155;
         }
         .result-box {
-            margin-top: 20px;
-            padding: 12px;
+            margin-top: 15px;
+            padding: 10px;
             background: #0f172a;
             border-radius: 8px;
             border: 1px solid #334155;
             word-break: break-all;
         }
         .result-box h3 {
-            font-size: 14px;
+            font-size: 13px;
             color: #94a3b8;
             margin: 0 0 5px 0;
         }
         #qr-result {
-            font-size: 16px;
+            font-size: 15px;
             color: #4ade80;
             margin: 0;
         }
@@ -63,9 +64,9 @@
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
-            transition: background 0.2s;
+            width: 100%;
         }
         .btn:hover {
             background: #0369a1;
@@ -77,38 +78,34 @@
     <div class="container">
         <h2>Eskanè QR Code</h2>
         
-        <!-- Kote kamera a ap afiche a -->
         <div id="reader"></div>
 
-        <!-- Zòn pou afiche rezilta a -->
         <div class="result-box">
-            <h3>Rezilta Eskanè a:</h3>
-            <p id="qr-result">Tann kamera a louvri...</p>
+            <h3>Dènye rezilta eskane:</h3>
+            <p id="qr-result">Vize yon QR Code...</p>
         </div>
 
-        <button class="btn" id="start-btn" onclick="startScanner()">Re-eskane</button>
+        <button class="btn" onclick="startScanner()">Re-eskane</button>
     </div>
 
     <script>
         let html5QrCode;
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Lè li fin jwenn yon QR Code
+            // Afiche l sou ekran paj web la tou
             document.getElementById('qr-result').innerText = decodedText;
             
-            // Si w vle ouvè lyen an otomatikman si se yon sit entènèt:
-            if (decodedText.startsWith("http://") || decodedText.startsWith("https://")) {
-                if(confirm("Èske w vle louvri lyen sa a? \n" + decodedText)) {
-                    window.location.href = decodedText;
-                }
+            // Voye tèks la bay aplikasyon Sketchware la nan EditText (ip_input) la
+            if (window.AndroidBridge && typeof window.AndroidBridge.sendDataToApp === "function") {
+                window.AndroidBridge.sendDataToApp(decodedText);
             }
 
-            // Si w vle sispann eskanè a apre li fin li yon fwa:
-            // stopScanner();
+            // Opsyonèl: Sispann eskanè a apre li fin li yon fwa siksè
+            // html5QrCode.stop();
         }
 
         function onScanFailure(error) {
-            // Erè pandan l ap chèche kòd la (nòmal lè li poko wè anyen, kidonk nou pa bezwen afiche l tout tan)
+            // Erè nòmal pandan l ap chèche kòd la
         }
 
         function startScanner() {
@@ -119,20 +116,19 @@
             }
 
             html5QrCode.start(
-                { facingMode: "environment" }, // Sèvi ak kamera dèyè telefòn nan
+                { facingMode: "environment" }, 
                 {
-                    fps: 10,    // Kantite ankadreman pa segond
-                    qrbox: { width: 250, height: 250 } // Gwosè bwat eskanè a
+                    fps: 10,
+                    qrbox: { width: 220, height: 220 }
                 },
                 onScanSuccess,
                 onScanFailure
             ).catch((err) => {
-                document.getElementById('qr-result').innerText = "Erè: Pa ka louvri kamera a (fòk ou bay pèmisyon).";
+                document.getElementById('qr-result').innerText = "Erè louvri kamera.";
                 console.error(err);
             });
         }
 
-        // Lè paj la chaje, nou lance eskanè a otomatikman
         window.onload = function() {
             startScanner();
         };
