@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ht">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eskanè QR Code</title>
+    <title>Escáner de Código QR</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body {
@@ -76,40 +76,40 @@
 <body>
 
     <div class="container">
-        <h2>Eskanè QR Code</h2>
+        <h2>Escáner de Código QR</h2>
         
         <div id="reader"></div>
 
         <div class="result-box">
-            <h3>Dènye rezilta eskane:</h3>
-            <p id="qr-result">Vize yon QR Code...</p>
+            <h3>Último resultado escaneado:</h3>
+            <p id="qr-result">Apunta a un código QR...</p>
         </div>
 
-        <button class="btn" onclick="startScanner()">Re-eskane</button>
+        <button class="btn" onclick="startScanner()">Escanear de nuevo</button>
     </div>
 
     <script>
         let html5QrCode;
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Afiche l sou ekran paj web la tou
+            // Mostrar en la pantalla de la página web
             document.getElementById('qr-result').innerText = decodedText;
             
-            // Voye tèks la bay aplikasyon Sketchware la nan EditText (ip_input) la
+            // Enviar el texto a la aplicación de Sketchware en el EditText (ip_input)
             if (window.AndroidBridge && typeof window.AndroidBridge.sendDataToApp === "function") {
                 window.AndroidBridge.sendDataToApp(decodedText);
             }
 
-            // Opsyonèl: Sispann eskanè a apre li fin li yon fwa siksè
+            // Opcional: Detener el escáner después de una lectura exitosa
             // html5QrCode.stop();
         }
 
         function onScanFailure(error) {
-            // Erè nòmal pandan l ap chèche kòd la
+            // Error normal mientras busca el código
         }
 
         function startScanner() {
-            document.getElementById('qr-result').innerText = "Ap chèche QR Code...";
+            document.getElementById('qr-result').innerText = "Buscando código QR...";
             
             if (!html5QrCode) {
                 html5QrCode = new Html5Qrcode("reader");
@@ -124,7 +124,7 @@
                 onScanSuccess,
                 onScanFailure
             ).catch((err) => {
-                document.getElementById('qr-result').innerText = "Erè louvri kamera.";
+                document.getElementById('qr-result').innerText = "Error al abrir la cámara.";
                 console.error(err);
             });
         }
